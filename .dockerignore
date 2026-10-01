@@ -1,0 +1,7 @@
+node_modules
+.terraform
+infra
+video
+.cache
+docs
+*.md
