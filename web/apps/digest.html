@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Focus Digest</title>
+<style>
+  :root { --bg:#0b1220; --card:#121b2e; --ink:#eef2ff; --muted:#93a0bd; --accent:#38bdf8; --ok:#34d399; --warn:#fbbf24; --bad:#f87171; }
+  * { box-sizing: border-box; }
+  body { margin:0; font: 15px/1.4 "Inter", system-ui, sans-serif; color:var(--ink); background:var(--bg); padding:18px 20px; }
+  h1 { font-size: 13px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 6px; font-weight: 600; }
+  .headline { font-size: 22px; font-weight: 650; margin: 0 0 14px; }
+  .stats { display:flex; gap:10px; margin-bottom: 14px; }
+  .stat { flex:1; background:var(--card); border-radius:12px; padding:10px 12px; }
+  .stat b { display:block; font-size:24px; }
+  .stat span { color:var(--muted); font-size:12px; }
+  ul { list-style:none; margin:0; padding:0; display:grid; gap:8px; }
+  li { display:flex; gap:10px; align-items:flex-start; background:var(--card); border-radius:12px; padding:10px 12px; animation: in .35s ease both; }
+  li .i { font-size:18px; line-height:1.2; }
+  li.ask { outline: 1.5px solid var(--warn); }
+  .actions { display:flex; gap:8px; margin-top:8px; }
+  button { border:0; border-radius:999px; padding:7px 14px; font:600 13px inherit; cursor:pointer; }
+  .yes { background:var(--ok); color:#052e1c; } .no { background:#273349; color:var(--ink); }
+  @keyframes in { from { opacity:0; transform: translateY(6px);} }
+</style>
+</head>
+<body>
+  <h1>FrontDesk · While you were focused</h1>
+  <p class="headline" id="headline">Loading…</p>
+  <div class="stats">
+    <div class="stat"><b id="handled">0</b><span>handled for you</span></div>
+    <div class="stat"><b id="blocked">0</b><span>suspicious blocked</span></div>
+    <div class="stat"><b id="pending">0</b><span>need your OK</span></div>
+  </div>
+  <ul id="items"></ul>
+<script>
+  // Minimal MCP Apps (ui/*) client: speaks JSON-RPC over postMessage with the host.
+  const ICON = { delivery: "📦", food: "🍛", booking: "📅", shield: "🛡️", info: "💬" };
+  let nextId = 1; const waiting = new Map();
+  const rpc = (method, params) => new Promise((resolve) => { const id = nextId++; waiting.set(id, resolve); parent.postMessage({ jsonrpc: "2.0", id, method, params }, "*"); });
+  const notify = (method, params) => parent.postMessage({ jsonrpc: "2.0", method, params }, "*");
+
+  function render(d) {
+    if (!d) return;
+    document.getElementById("headline").textContent = d.headline;
+    document.getElementById("handled").textContent = d.handledCount;
+    document.getElementById("blocked").textContent = d.blockedCount;
+    document.getElementById("pending").textContent = d.pendingApprovals.length;
+    const ul = document.getElementById("items"); ul.innerHTML = "";
+    for (const it of d.items.filter((i) => !i.needsApproval)) {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="i">${ICON[it.icon] || "•"}</span><span></span>`;
+      li.lastChild.textContent = it.text; ul.append(li);
+    }
+    for (const p of d.pendingApprovals) {
+      const li = document.createElement("li"); li.className = "ask";
+      li.innerHTML = `<span class="i">⏳</span><div><div></div><div class="actions"><button class="yes">Approve</button><button class="no">Decline</button></div></div>`;
+      li.querySelector("div > div").textContent = p.summary;
+      li.querySelector(".yes").onclick = () => decide(p.id, true);
+      li.querySelector(".no").onclick = () => decide(p.id, false);
+      ul.append(li);
+    }
+  }
+  async function decide(approvalId, approve) {
+    await rpc("tools/call", { name: "resolve_approval", arguments: { approvalId, approve } });
+    const r = await rpc("tools/call", { name: "get_focus_digest", arguments: {} });
+    render(r && r.structuredContent);
+  }
+  window.addEventListener("message", (e) => {
+    const m = e.data; if (!m || m.jsonrpc !== "2.0") return;
+    if (m.id && waiting.has(m.id)) { waiting.get(m.id)(m.result); waiting.delete(m.id); return; }
+    if (m.method === "ui/notifications/tool-result") render(m.params && m.params.structuredContent);
+  });
+  rpc("ui/initialize", { protocolVersion: "2026-01-26", appInfo: { name: "frontdesk-digest", version: "0.1.0" }, appCapabilities: {} })
+    .then(() => notify("ui/notifications/initialized", {}));
+</script>
+</body>
+</html>
