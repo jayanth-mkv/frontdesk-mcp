@@ -16,7 +16,7 @@
 | AWS infra (Terraform) | 🟡 Partly deployed | DynamoDB, ECR, IAM and the image are live; the AgentCore runtime is blocked by quota |
 | Demo video | 🟡 Pipeline built, test take ran | Automated recorder works, but the take is about 4:35 and must be under 3:00 |
 | README, Devpost write-up | ⬜ Not started | |
-| Public GitHub repo | ⬜ Not started | Needs the repo name from the user |
+| Public GitHub repo | ✅ Done | [jayanth-mkv/frontdesk-mcp](https://github.com/jayanth-mkv/frontdesk-mcp), MIT |
 | Friction log | 🟡 Ongoing | 5 entries, see [FRICTION_LOG.md](FRICTION_LOG.md) |
 
 **Overall: about 60% done.** The product works end to end. What's left is mostly unblocking AWS, real-LLM polish, the final video, and the submission materials.
@@ -100,7 +100,7 @@ These differ from the original plan in [ARCHITECTURE.md](ARCHITECTURE.md): no St
 | 2 | **Anthropic use-case form not submitted** | `GetUseCaseForModelAccess`: "You have not filled out the request form" | **User** | Bedrock console → Model catalog → Claude Haiku 4.5 → submit the form |
 | 3 | **AgentCore quota is 0** | `CreateAgentRuntime: ServiceQuotaExceededException: maxAgents limit exceeded` with no runtimes | **User → AWS** | Service Quotas → Bedrock AgentCore → request 5, or add it to the support case |
 | 4 | **Video too long** | Raw demo 225 s + cards 50 s ≈ 4:35 | **Claude** | Trim plan below |
-| 5 | GitHub repo name | Needed for the public repo and the Open Source mini challenge | **User** | Pick a name |
+| 5 | ~~GitHub repo name~~ | Resolved: `frontdesk-mcp` (keeps "Alexa" out of the name per trademark guidelines) | | Done |
 | 6 | Budget alert email | Needed to turn on the $100 budget | **User** | Give the email address |
 
 ### Video trim plan (target ≤ 2:50)
@@ -125,7 +125,7 @@ These differ from the original plan in [ARCHITECTURE.md](ARCHITECTURE.md): no St
 7. Record the final video with Claude and Polly, then upload it to YouTube (user).
 
 **Before the deadline:**
-8. Create the public GitHub repo (MIT), push, and submit on Devpost with the friction logs and feature requests.
+8. Push final changes to the public repo and submit on Devpost with the friction logs and feature requests.
 
 ## Submission checklist
 - [x] Working MCP server, spec ≥ 2025-11-25 over Streamable HTTP
@@ -133,7 +133,7 @@ These differ from the original plan in [ARCHITECTURE.md](ARCHITECTURE.md): no St
 - [x] Mock mode so judges can run it without AWS
 - [ ] Bedrock in use (AWS Builder mini)
 - [ ] AgentCore deployment (AWS Builder mini)
-- [ ] Public repo with MIT license (Open Source mini)
+- [x] Public repo with MIT license (Open Source mini)
 - [ ] Demo video < 3:00 on YouTube
 - [ ] Devpost text description
 - [ ] Product feedback on each AWS tool used
