@@ -1,0 +1,125 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockFull",
+      "Effect": "Allow",
+      "Action": ["bedrock:*", "bedrock-agentcore:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "BedrockModelSubscriptions",
+      "Effect": "Allow",
+      "Action": [
+        "aws-marketplace:Subscribe",
+        "aws-marketplace:Unsubscribe",
+        "aws-marketplace:ViewSubscriptions",
+        "aws-marketplace:MeterUsage"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "VoiceAndSpeech",
+      "Effect": "Allow",
+      "Action": ["polly:*", "transcribe:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DataAndStorage",
+      "Effect": "Allow",
+      "Action": ["dynamodb:*", "s3:*", "ssm:*", "secretsmanager:*", "kms:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ContainersAndCompute",
+      "Effect": "Allow",
+      "Action": ["ecr:*", "ecr-public:*", "lambda:*", "codebuild:*", "apigateway:*", "cloudfront:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "AuthForMcpOAuth",
+      "Effect": "Allow",
+      "Action": ["cognito-idp:*", "cognito-identity:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ObservabilityAndCost",
+      "Effect": "Allow",
+      "Action": [
+        "logs:*",
+        "cloudwatch:*",
+        "xray:*",
+        "application-signals:*",
+        "budgets:*",
+        "ce:*",
+        "cur:DescribeReportDefinitions",
+        "tag:*",
+        "resource-groups:*"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "EventsAndMessaging",
+      "Effect": "Allow",
+      "Action": ["events:*", "scheduler:*", "sns:*", "sqs:*"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IamReadOnly",
+      "Effect": "Allow",
+      "Action": ["iam:Get*", "iam:List*", "iam:SimulatePrincipalPolicy", "sts:GetCallerIdentity", "sts:DecodeAuthorizationMessage"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "IamManageProjectRoles",
+      "Effect": "Allow",
+      "Action": [
+        "iam:CreateRole",
+        "iam:DeleteRole",
+        "iam:UpdateRole",
+        "iam:UpdateAssumeRolePolicy",
+        "iam:TagRole",
+        "iam:UntagRole",
+        "iam:PutRolePolicy",
+        "iam:DeleteRolePolicy",
+        "iam:AttachRolePolicy",
+        "iam:DetachRolePolicy",
+        "iam:PassRole",
+        "iam:CreatePolicy",
+        "iam:DeletePolicy",
+        "iam:CreatePolicyVersion",
+        "iam:DeletePolicyVersion",
+        "iam:TagPolicy",
+        "iam:UntagPolicy"
+      ],
+      "Resource": ["arn:aws:iam::*:role/frontdesk-*", "arn:aws:iam::*:policy/frontdesk-*"]
+    },
+    {
+      "Sid": "AgentCoreRuntimeIdentitySLR",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/runtime-identity.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreRuntimeIdentity",
+      "Condition": {
+        "StringEquals": { "iam:AWSServiceName": "runtime-identity.bedrock-agentcore.amazonaws.com" }
+      }
+    },
+    {
+      "Sid": "AgentCoreNetworkSLR",
+      "Effect": "Allow",
+      "Action": "iam:CreateServiceLinkedRole",
+      "Resource": "arn:aws:iam::*:role/aws-service-role/network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreNetwork",
+      "Condition": {
+        "StringEquals": { "iam:AWSServiceName": "network.bedrock-agentcore.amazonaws.com" }
+      }
+    },
+    {
+      "Sid": "AgentCoreSLRCleanup",
+      "Effect": "Allow",
+      "Action": ["iam:DeleteServiceLinkedRole", "iam:GetServiceLinkedRoleDeletionStatus"],
+      "Resource": [
+        "arn:aws:iam::*:role/aws-service-role/runtime-identity.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreRuntimeIdentity",
+        "arn:aws:iam::*:role/aws-service-role/network.bedrock-agentcore.amazonaws.com/AWSServiceRoleForBedrockAgentCoreNetwork"
+      ]
+    }
+  ]
+}
