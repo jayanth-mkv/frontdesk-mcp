@@ -24,6 +24,7 @@ Entry for the **Amazon "Build, Ship, Shape" hackathon**: Alexa+ track + AWS Buil
 - When a tool, SDK or docs page causes friction, add an entry to `docs/FRICTION_LOG.md` right away (it is worth a judging bonus).
 - Keep it simple: the smallest thing that makes the demo convincing. Stretch goals stay in `ROADMAP.md` until the MVP is done.
 - Update the docs when a decision changes.
+- The repo is public. Put private drafts and anything not meant for GitHub (submission drafts, rehearsal takes, notes) in `tmp/`, which is gitignored. The Devpost draft lives at `tmp/DEVPOST.md`.
 
 ## Stack
 TypeScript / Node 22 · `@modelcontextprotocol/sdk` · Amazon Bedrock Converse (Claude) · Amazon Polly · DynamoDB · AgentCore Runtime · plain HTML/JS simulator (no build step) · Terraform (`infra/terraform`, AWS profile `me`, region ap-southeast-1).

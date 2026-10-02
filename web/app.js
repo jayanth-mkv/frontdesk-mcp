@@ -1,4 +1,7 @@
 // FrontDesk Alexa+ simulator. Plain JS, no build step.
+import { icon, hydrateIcons } from "./icons.js";
+
+hydrateIcons();
 const $ = (s, el = document) => el.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const hasDevanagari = (s) => /[ऀ-ॿ]/.test(s);
@@ -140,9 +143,11 @@ function postToolResult(result) {
 
 // ---------- Front door line ----------
 const calls = $("#calls");
+const EMPTY = `<div class="empty"><div class="ring">${icon("phone", 20)}</div><b>No calls yet</b><span>Calls, couriers and doorbells land here.<br/>FrontDesk answers them using your house rules.</span></div>`;
+calls.innerHTML = EMPTY;
 let callCount = 0;
 function decisionRow(d) {
-  return `<div class="dec"><b class="${d.decision}">${d.decision.toUpperCase()}</b><span><span class="t">${esc(d.type.replaceAll("_", " "))}</span> <span class="r">· ${esc(d.reason)}</span></span></div>`;
+  return `<div class="dec"><span class="badge ${d.decision}">${d.decision.toUpperCase()}</span><span><span class="t">${esc(d.type.replaceAll("_", " "))}</span> <span class="r">· ${esc(d.reason)}</span></span></div>`;
 }
 
 async function placeCall(sc) {
@@ -155,7 +160,7 @@ async function placeCall(sc) {
   card.innerHTML = `
     <div class="call-h"><div class="avatar">${esc(initials)}</div>
       <div><div class="call-name">${esc(sc.callerName)}</div><div class="call-num">${esc(sc.callerNumber)} · incoming ${esc(sc.channel ?? "call")}</div></div>
-      <span class="verify wait">Checking…</span></div>
+      <span class="badge wait">Checking…</span></div>
     <div class="bubble"><div class="who">Caller</div><div class="${hasDevanagari(sc.message) ? "hi" : ""}">${esc(sc.message)}</div>${sc.subtitle ? `<div class="sub-en">${esc(sc.subtitle)}</div>` : ""}</div>
     <div class="decisions"></div>`;
   calls.prepend(card);
@@ -172,9 +177,9 @@ async function placeCall(sc) {
     card.append(typing);
     const r = await pending;
     typing.remove();
-    const v = $(".verify", card);
-    v.className = `verify ${r.verified ? "ok" : "bad"}`;
-    v.textContent = r.verified ? "✓ Verified caller" : "⚠ Unknown number";
+    const v = $(".call-h .badge", card);
+    v.className = `badge ${r.verified ? "ok" : "bad"}`;
+    v.innerHTML = r.verified ? `${icon("shieldCheck", 13)}Verified caller` : `${icon("shieldAlert", 13)}Unknown number`;
     const decs = $(".decisions", card);
     for (const d of r.decisions) {
       decs.insertAdjacentHTML("beforeend", decisionRow(d));
@@ -211,8 +216,8 @@ function renderState({ state, digest, llm, clockOffsetMs }) {
   }
   const on = state.focus.on;
   const badge = $("#focus-badge");
-  badge.className = `badge ${on ? "on" : "off"}`;
-  badge.textContent = on ? `Focus · until ${state.focus.until ? fmt(state.focus.until) : "you're back"}` : "Available";
+  badge.className = `badge ${on ? "solid" : "outline"}`;
+  badge.innerHTML = on ? `${icon("headphones", 12)}Focus · until ${state.focus.until ? fmt(state.focus.until) : "you're back"}` : "Available";
   if (!appVisible) showView(on ? "focus" : "idle");
   $("#f-handled").textContent = digest.handledCount;
   $("#f-blocked").textContent = digest.blockedCount;
@@ -228,7 +233,7 @@ function renderState({ state, digest, llm, clockOffsetMs }) {
   rows.innerHTML = state.ledger
     .map(
       (l) =>
-        `<div class="lrow"><span class="tm">${fmt(l.at)}</span><span class="ac ${l.actor}">${l.actor}</span><span class="dc">${l.decision ? `<span class="${l.decision}">${l.decision.toUpperCase()}</span>` : ""}</span><span>${esc(l.summary)}</span></div>`,
+        `<tr><td class="tm">${fmt(l.at)}</td><td><span class="actor ${l.actor}">${l.actor}</span></td><td>${l.decision ? `<span class="badge ${l.decision}">${l.decision.toUpperCase()}</span>` : ""}</td><td>${esc(l.summary)}</td></tr>`,
     )
     .join("");
 }
@@ -243,7 +248,7 @@ es.addEventListener("host-tool", (e) => {
   const { name } = JSON.parse(e.data);
   const chip = document.createElement("span");
   chip.className = "tool-chip";
-  chip.textContent = `MCP → ${name}()`;
+  chip.innerHTML = `${icon("zap", 12)}MCP → ${esc(name)}()`;
   $("#tools").append(chip);
   setTimeout(() => chip.remove(), 6000);
 });
@@ -270,7 +275,8 @@ for (const [id, accept] of [["#elicit-yes", true], ["#elicit-no", false]])
 const scenarios = await api("/api/scenarios");
 for (const sc of scenarios) {
   const b = document.createElement("button");
-  b.textContent = `📞 ${sc.label}`;
+  b.className = "btn outline sm";
+  b.innerHTML = `${icon("phone", 14)}${esc(sc.label)}`;
   b.onclick = () => placeCall(sc);
   $("#scenario-buttons").append(b);
 }
@@ -284,7 +290,7 @@ async function reset() {
   appVisible = false;
   lastToolResult = null;
   chat.innerHTML = "";
-  calls.innerHTML = `<div class="empty">Calls, couriers and doorbells land here.<br/>FrontDesk answers them using your house rules.</div>`;
+  calls.innerHTML = EMPTY;
   callCount = 0;
   $("#line-count").textContent = "No calls yet";
   await refresh();

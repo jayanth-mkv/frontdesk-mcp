@@ -12,6 +12,7 @@ import type {
 } from "../domain/types.js";
 import type { Store } from "../store/store.js";
 import { now as clockNow } from "../clock.js";
+import { seedState } from "../domain/seed.js";
 import { decide, verifyCaller } from "./guardrails.js";
 
 const id = (p: string) => `${p}-${randomUUID().slice(0, 8)}`;
@@ -64,8 +65,8 @@ export class FrontDesk {
 
   reset(householdId: string) {
     return this.tx(householdId, (s) => {
-      const fresh = { ...s, focus: { on: false }, contacts: [], approvals: [], ledger: [], digest: [] };
-      Object.assign(s, fresh);
+      // Reseed fully: approvals mutate orders and bookings, and a replayed demo must start clean.
+      Object.assign(s, { ...seedState(), householdId: s.householdId });
       return s;
     });
   }

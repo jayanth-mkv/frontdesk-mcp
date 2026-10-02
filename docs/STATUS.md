@@ -110,6 +110,12 @@ These differ from the original plan in [ARCHITECTURE.md](ARCHITECTURE.md): no St
 - The digest no longer lists an approval-only call twice; the Approve button is scrolled into view before the tap.
 - Real Claude replies may run longer or shorter than the offline templates, so re-check the length after the Bedrock take.
 
+### UI refresh (done 2026-10-03)
+- The simulator uses shadcn/ui-style zinc tokens in plain CSS (still no build step): light app chrome and a dark Echo Show, Geist font, Lucide icons instead of emoji, and the ledger as a table.
+- New logo ([web/logo.svg](../web/logo.svg)): a doorway with voice waves. It is also the favicon and appears on the video cards.
+- The MCP App digest and the title, architecture and closing cards match the new look. The video was re-recorded (offline, 2:35) and the gallery in `docs/media/` was recaptured.
+- Fixed: `/api/reset` now reseeds orders and bookings. Before, an approved booking move survived a reset, so a replayed demo read "move your 6:30 pm booking to 6:30 pm".
+
 ---
 
 ## Next steps

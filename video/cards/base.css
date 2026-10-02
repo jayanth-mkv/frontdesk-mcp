@@ -1,10 +1,16 @@
+/* shadcn/ui zinc, matching the simulator. */
 * { box-sizing: border-box; margin: 0; }
-body { width: 1920px; height: 1080px; overflow: hidden; color: #eef2ff; font-family: "Inter", system-ui, sans-serif;
-  background: radial-gradient(1400px 800px at 50% -10%, #1e3a8a 0%, #0b1020 55%, #05070d 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.logo { width: 120px; height: 120px; border-radius: 34px; display: grid; place-items: center; font-size: 66px; color: #fff; background: linear-gradient(135deg, #38bdf8, #8b5cf6); box-shadow: 0 30px 80px #38bdf855; }
-h1 { font-size: 120px; font-weight: 800; letter-spacing: -.035em; margin-top: 36px; }
-h1 small { font-size: 56px; font-weight: 500; color: #93a0bd; letter-spacing: -.01em; }
-.tag { font-size: 40px; color: #c7d2fe; margin-top: 18px; text-align: center; max-width: 1400px; line-height: 1.35; }
-.foot { position: absolute; bottom: 56px; font-size: 24px; color: #64748b; letter-spacing: .08em; text-transform: uppercase; }
-.stat { display: flex; gap: 60px; margin-top: 60px; }
-.stat div { text-align: center; } .stat b { display: block; font-size: 84px; font-weight: 800; color: #fff; } .stat span { color: #93a0bd; font-size: 26px; }
+body { width: 1920px; height: 1080px; overflow: hidden; color: #09090b; font-family: "Geist", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+  background-color: #fafafa; background-image: radial-gradient(#e4e4e7 1.2px, transparent 1.2px); background-size: 28px 28px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; }
+body::before { content: ""; position: absolute; inset: 0; background: radial-gradient(900px 600px at 50% 45%, #fafafa 30%, transparent 100%); z-index: -1; }
+.logo { width: 128px; height: 128px; display: block; filter: drop-shadow(0 20px 40px rgb(0 0 0 / .18)); }
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; border: 1px solid #e4e4e7; background: #fff; border-radius: 999px; padding: 8px 18px; font-size: 22px; font-weight: 500; color: #52525b; margin-top: 40px; box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.eyebrow i { width: 9px; height: 9px; border-radius: 50%; background: #10b981; box-shadow: 0 0 0 4px #10b98126; }
+h1 { font-size: 128px; font-weight: 700; letter-spacing: -.045em; margin-top: 22px; line-height: 1.05; }
+h1 small { font-size: 60px; font-weight: 400; color: #71717a; letter-spacing: -.02em; }
+.tag { font-size: 40px; color: #52525b; margin-top: 22px; text-align: center; max-width: 1400px; line-height: 1.35; letter-spacing: -.01em; }
+.foot { position: absolute; bottom: 56px; font-size: 22px; color: #71717a; font-weight: 500; }
+.stat { display: flex; gap: 24px; margin-top: 56px; }
+.stat div { text-align: left; background: #fff; border: 1px solid #e4e4e7; border-radius: 20px; padding: 26px 36px; min-width: 300px; box-shadow: 0 1px 2px rgb(0 0 0 / .05); }
+.stat b { display: block; font-size: 84px; font-weight: 700; letter-spacing: -.04em; line-height: 1; } .stat span { color: #71717a; font-size: 26px; }

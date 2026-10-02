@@ -4,34 +4,38 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>FrontDesk Simulator</title>
+<link rel="icon" href="logo.svg" type="image/svg+xml" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Noto+Sans+Devanagari:wght@400;600&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 <header class="top">
-  <div class="brand"><span class="logo">⌂</span> FrontDesk <small>for Alexa+</small></div>
+  <div class="brand"><img class="logo" src="logo.svg" alt="" /> FrontDesk <span class="brand-sub">for Alexa+</span></div>
   <div class="pills">
-    <span class="pill" id="pill-mcp">MCP 2025-11-25 · Streamable HTTP</span>
-    <span class="pill" id="pill-llm">LLM: …</span>
-    <span class="pill" id="pill-voice">Voice: Amazon Polly</span>
+    <span class="pill" id="pill-mcp"><span class="dot"></span>MCP 2025-11-25 · Streamable HTTP</span>
+    <span class="pill" id="pill-llm"><span class="dot"></span>LLM: …</span>
+    <span class="pill" id="pill-voice"><span class="dot"></span>Voice: Amazon Polly</span>
   </div>
 </header>
 
 <main class="grid">
   <!-- Left: the user -->
-  <section class="panel desk">
-    <div class="panel-h"><span>🧑‍💻 Arjun · home office</span><span id="focus-badge" class="badge off">Available</span></div>
+  <section class="card desk">
+    <div class="card-h">
+      <div class="card-title"><i data-icon="user"></i>Arjun <span class="muted">· home office</span></div>
+      <span id="focus-badge" class="badge outline">Available</span>
+    </div>
     <div id="chat" class="chat"></div>
     <div class="suggest" id="suggest">
-      <button data-say="Alexa, I'm going heads-down for two hours.">Going heads-down</button>
-      <button data-say="Alexa, what did I miss?">What did I miss?</button>
-      <button data-say="Yes, approve it.">Approve it</button>
+      <button class="btn outline sm" data-say="Alexa, I'm going heads-down for two hours.">Going heads-down</button>
+      <button class="btn outline sm" data-say="Alexa, what did I miss?">What did I miss?</button>
+      <button class="btn outline sm" data-say="Yes, approve it.">Approve it</button>
     </div>
     <form id="say-form" class="say">
-      <button type="button" id="mic" title="Hold to talk">🎙️</button>
-      <input id="say" placeholder="Talk to Alexa…" autocomplete="off" />
-      <button type="submit">Send</button>
+      <button type="button" class="btn outline icon-btn" id="mic" title="Hold to talk"><i data-icon="mic"></i></button>
+      <input id="say" class="input" placeholder="Talk to Alexa…" autocomplete="off" />
+      <button type="submit" class="btn icon-btn" title="Send"><i data-icon="send"></i></button>
     </form>
   </section>
 
@@ -41,14 +45,14 @@
       <div class="screen" id="screen">
         <div class="view idle" id="view-idle">
           <div class="clock" id="clock">--:--</div>
-          <div class="sub">Bengaluru · 27° Partly cloudy</div>
+          <div class="sub"><i data-icon="cloud"></i>Bengaluru · 27° Partly cloudy</div>
           <div class="tiles">
-            <div class="tile"><b id="t-deliveries">3</b><span>deliveries today</span></div>
-            <div class="tile"><b id="t-next">5:00 pm</b><span id="t-next-label">Glow Studio</span></div>
+            <div class="tile"><i data-icon="package" data-size="18"></i><b id="t-deliveries">3</b><span>deliveries today</span></div>
+            <div class="tile"><i data-icon="calendar" data-size="18"></i><b id="t-next">5:00 pm</b><span id="t-next-label">Glow Studio</span></div>
           </div>
         </div>
         <div class="view focus" id="view-focus" hidden>
-          <div class="focus-ring"><div class="pulse"></div><span>🎧</span></div>
+          <div class="focus-ring"><div class="pulse"></div><i data-icon="headphones" data-size="34"></i></div>
           <h2>Focus mode</h2>
           <p>FrontDesk is answering your door &amp; phone</p>
           <div class="tiles">
@@ -63,9 +67,9 @@
         </div>
         <div class="elicit" id="elicit" hidden>
           <div class="elicit-card">
-            <div class="elicit-h">FrontDesk needs your OK</div>
+            <div class="elicit-h"><i data-icon="shieldAlert"></i>FrontDesk needs your OK</div>
             <p id="elicit-msg"></p>
-            <div class="row"><button class="yes" id="elicit-yes">Yes, do it</button><button class="no" id="elicit-no">No</button></div>
+            <div class="row"><button class="btn lg light" id="elicit-yes">Yes, do it</button><button class="btn lg ghost-dark" id="elicit-no">No</button></div>
           </div>
         </div>
         <div class="caption" id="caption"></div>
@@ -77,32 +81,40 @@
   </section>
 
   <!-- Right: front door / phone line -->
-  <section class="panel line">
-    <div class="panel-h"><span>📞 Front door line</span><span class="muted" id="line-count">No calls yet</span></div>
-    <div id="calls" class="calls">
-      <div class="empty">Calls, couriers and doorbells land here.<br/>FrontDesk answers them using your house rules.</div>
+  <section class="card line">
+    <div class="card-h">
+      <div class="card-title"><i data-icon="phone"></i>Front door line</div>
+      <span class="muted sm" id="line-count">No calls yet</span>
     </div>
+    <div id="calls" class="calls"></div>
   </section>
 
   <!-- Bottom: ledger -->
-  <section class="panel ledger">
-    <div class="panel-h"><span>📒 Consent ledger <span class="muted">· every word &amp; action, on the record</span></span></div>
-    <div id="ledger" class="ledger-rows"></div>
+  <section class="card ledger">
+    <div class="card-h">
+      <div class="card-title"><i data-icon="ledger"></i>Consent ledger <span class="muted">· every word &amp; action, on the record</span></div>
+    </div>
+    <div class="ledger-scroll">
+      <table class="table">
+        <thead><tr><th class="c-tm">Time</th><th class="c-ac">Actor</th><th class="c-dc">Decision</th><th>Event</th></tr></thead>
+        <tbody id="ledger"></tbody>
+      </table>
+    </div>
   </section>
 </main>
 
-<aside class="director" id="director" hidden>
-  <div class="director-h">Demo director <small>(press D)</small></div>
+<aside class="director card" id="director" hidden>
+  <div class="director-h">Demo director <span class="kbd">D</span></div>
   <div id="scenario-buttons"></div>
-  <hr/>
+  <div class="sep"></div>
   <form id="custom-call">
-    <input name="callerName" placeholder="Caller name" value="Ramesh, FreshCart" />
-    <input name="callerNumber" placeholder="Number" value="+91 97400 30900" />
-    <select name="language"><option>en-IN</option><option>hi-IN</option></select>
-    <textarea name="message" rows="2">Hi, I'm downstairs with your groceries, the guard is asking which flat.</textarea>
-    <button>Place custom call</button>
+    <input class="input" name="callerName" placeholder="Caller name" value="Ramesh, FreshCart" />
+    <input class="input" name="callerNumber" placeholder="Number" value="+91 97400 30900" />
+    <select class="input" name="language"><option>en-IN</option><option>hi-IN</option></select>
+    <textarea class="input" name="message" rows="2">Hi, I'm downstairs with your groceries, the guard is asking which flat.</textarea>
+    <button class="btn">Place custom call</button>
   </form>
-  <button id="reset" class="danger">Reset demo</button>
+  <button id="reset" class="btn outline destructive">Reset demo</button>
 </aside>
 
 <script src="app.js" type="module"></script>

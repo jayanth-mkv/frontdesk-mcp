@@ -15,3 +15,6 @@ coverage/
 !*.tfvars.example
 .cache/
 video/out/
+
+# Private drafts and scratch files (never pushed)
+tmp/

@@ -6,6 +6,7 @@
  *  4. assembles the final MP4 with ffmpeg.
  *
  * Usage: start the server (npm start), then `npx tsx scripts/record-video.ts`.
+ * Intermediates in video/out/tmp are deleted at the end; set KEEP_TMP=1 to keep them.
  */
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readdirSync, renameSync, rmSync, writeFileSync } from "node:fs";
@@ -153,6 +154,7 @@ async function main() {
   const total = duration(final);
   console.log(`\nVideo: ${final}\nLength: ${total.toFixed(1)}s ${total > 180 ? "(OVER 3:00, trim!)" : "(under 3:00)"}`);
   console.log("Segments:", readdirSync(TMP).filter((f) => f.endsWith(".mp4")).map((f) => `${f}=${duration(join(TMP, f)).toFixed(1)}s`).join("  "));
+  if (!process.env.KEEP_TMP) rmSync(TMP, { recursive: true, force: true });
 }
 
 main().catch((e) => {
