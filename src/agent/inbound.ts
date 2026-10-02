@@ -118,8 +118,9 @@ export function mockReply(contact: InboundContact, state: HouseholdState, v: Ver
   for (const a of decided) {
     if (a.type === "share_directions" && a.decision === "auto") {
       const r = state.rules.address;
-      en.push(`${r.gate}. ${r.directions} Please leave it ${state.rules.dropOff.preferredSpot}.`);
-      parts.push(hi ? `${r.society} के गेट 2 से आइए, क्लबहाउस के आगे बाएं तरफ़ दूसरा टावर, टावर B है। बारहवीं मंज़िल, फ़्लैट 1204, खाना दरवाज़े के बाहर शू रैक पर रख दीजिए।` : en[en.length - 1]);
+      const full = `${r.gate}. ${r.directions} Please leave it ${state.rules.dropOff.preferredSpot}.`;
+      en.push(hi ? "Come in through Gate 2 to Tower B, 12th floor, flat 1204. Please leave the food on the shoe rack." : full);
+      parts.push(hi ? `गेट 2 से टावर B आइए, बारहवीं मंज़िल, फ़्लैट 1204। खाना शू रैक पर रख दीजिए।` : full);
       digest.push(`Guided the ${who} rider to the door.`);
     } else if (a.decision === "deny") {
       en.push("Sorry, I can't share that. Thank you.");

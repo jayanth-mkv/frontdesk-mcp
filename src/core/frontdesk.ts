@@ -118,7 +118,8 @@ export class FrontDesk {
 
       const flagged = decisions.some((d) => d.type === "flag_suspicious" || (d.decision === "deny" && /otp|secret/.test(d.type)));
       const icon: DigestItem["icon"] = flagged ? "shield" : v.booking ? "booking" : v.order?.kind === "food" ? "food" : v.order ? "delivery" : "info";
-      this.addDigest(s, { icon, text: digest });
+      // A call that only produced approvals is already covered by its approval item.
+      if (!(approvals.length && decisions.every((d) => d.decision === "ask"))) this.addDigest(s, { icon, text: digest });
       for (const p of approvals) this.addDigest(s, { icon: "info", text: p.summary, needsApproval: p.id });
       return { contact, verified: v.verified, decisions, reply, replyEn, approvals };
     });

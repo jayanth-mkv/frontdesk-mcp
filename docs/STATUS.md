@@ -1,6 +1,6 @@
 # Project Status: FrontDesk for Alexa+
 
-**As of:** 2026-10-02 · **Deadline:** 2026-10-23 12:00 PM PT (21 days left) · **Target:** Alexa+ track 1st place, plus the AWS Builder and Open Source mini challenges
+**As of:** 2026-10-03 · **Deadline:** 2026-10-23 12:00 PM PT (20 days left) · **Target:** Alexa+ track 1st place, plus the AWS Builder and Open Source mini challenges
 
 ## At a glance
 
@@ -14,7 +14,7 @@
 | Amazon Polly voices | ✅ Working | Generative Hindi and English voices, disk-cached |
 | Amazon Bedrock (Claude) | ⛔ Blocked by AWS | Account verification hold, see [Blockers](#blockers) |
 | AWS infra (Terraform) | 🟡 Partly deployed | DynamoDB, ECR, IAM and the image are live; the AgentCore runtime is blocked by quota |
-| Demo video | 🟡 Pipeline built, test take ran | Automated recorder works, but the take is about 4:35 and must be under 3:00 |
+| Demo video | 🟡 Offline take is 2:35 | Under 3:00 (was 4:35). Re-record with Claude once Bedrock unblocks, then upload |
 | README, Devpost write-up | ⬜ Not started | |
 | Public GitHub repo | ✅ Done | [jayanth-mkv/frontdesk-mcp](https://github.com/jayanth-mkv/frontdesk-mcp), MIT |
 | Friction log | 🟡 Ongoing | 5 entries, see [FRICTION_LOG.md](FRICTION_LOG.md) |
@@ -97,24 +97,25 @@ These differ from the original plan in [ARCHITECTURE.md](ARCHITECTURE.md): no St
 | # | Blocker | Evidence | Owner | Fix |
 |---|---|---|---|---|
 | 1 | **Bedrock blocked at the account level** | `ValidationException: Operation not allowed` for all models, including Amazon Nova, in ap-southeast-1 and ap-south-1; ap-south-1 earlier said *"Your account is currently being verified."* IAM is fine and SCPs are disabled. | **User → AWS Support** | Open a case: Account and billing → account verification / Bedrock access. Check the payment method is valid. |
-| 2 | **Anthropic use-case form not submitted** | `GetUseCaseForModelAccess`: "You have not filled out the request form" | **User** | Bedrock console → Model catalog → Claude Haiku 4.5 → submit the form |
+| 2 | **Anthropic use-case form not submitted** | `GetUseCaseForModelAccess`: "You have not filled out the request form" (still the case on 2026-10-03) | **User** | Bedrock console → Model catalog → Claude Haiku 4.5 → submit the form |
 | 3 | **AgentCore quota is 0** | `CreateAgentRuntime: ServiceQuotaExceededException: maxAgents limit exceeded` with no runtimes | **User → AWS** | Service Quotas → Bedrock AgentCore → request 5, or add it to the support case |
-| 4 | **Video too long** | Raw demo 225 s + cards 50 s ≈ 4:35 | **Claude** | Trim plan below |
+| 4 | ~~Video too long~~ | Resolved 2026-10-03: 155 s total (title 15 s, demo 119 s, arch 14 s, close 7 s) | | Done |
 | 5 | ~~GitHub repo name~~ | Resolved: `frontdesk-mcp` (keeps "Alexa" out of the name per trademark guidelines) | | Done |
 | 6 | Budget alert email | Needed to turn on the $100 budget | **User** | Give the email address |
 
-### Video trim plan (target ≤ 2:50)
-- Shorten the title narration (18 s → 8 s) and the architecture narration (24 s → 14 s).
-- Run the four calls with shorter gaps, and drop the narration after the kitchen and salon calls. Let the on-screen decision chips speak.
-- Shorten the caller lines and FrontDesk replies (Claude will also be more concise than the offline templates).
-- Speed up the typing and cursor moves slightly.
+### Video trim (done 2026-10-03)
+- Shorter narration and caller lines; the separate "focus" narration was dropped.
+- Offline Alexa speech is shorter: the focus confirmation has no filler, and the digest gives only the headline plus the one approval question (the Echo Show card lists the details).
+- Shorter Hindi directions; tighter typing, cursor and decision pacing.
+- The digest no longer lists an approval-only call twice; the Approve button is scrolled into view before the tap.
+- Real Claude replies may run longer or shorter than the offline templates, so re-check the length after the Bedrock take.
 
 ---
 
 ## Next steps
 
 **While AWS is blocked (Claude):**
-1. Trim the video script and re-run the test take to get under 3:00 with good audio sync.
+1. ~~Trim the video to under 3:00~~ (done: 2:35 offline).
 2. Write the README (one-command run, screenshots, architecture, judges' guide).
 3. Draft the Devpost write-up and product feedback.
 4. Add a small integration test for the MCP server (initialize → list tools → call tools).

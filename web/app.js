@@ -162,7 +162,7 @@ async function placeCall(sc) {
   setTicker(`Answering ${sc.callerName}…`);
   busy++;
   try {
-    await sleep(VIDEO ? 900 : 300);
+    await sleep(VIDEO ? 600 : 300);
     card.classList.remove("ringing");
     const pending = api("/api/caller", sc.key ? { scenario: sc.key } : sc);
     await speak(sc.message, sc.key ?? "frontdeskEn");
@@ -178,7 +178,7 @@ async function placeCall(sc) {
     const decs = $(".decisions", card);
     for (const d of r.decisions) {
       decs.insertAdjacentHTML("beforeend", decisionRow(d));
-      await sleep(VIDEO ? 450 : 120);
+      await sleep(VIDEO ? 300 : 120);
     }
     const hi = hasDevanagari(r.reply);
     card.insertAdjacentHTML(
@@ -312,7 +312,7 @@ async function cursorTo(x, y) {
   if (!cursor) return;
   cursor.style.left = `${x}px`;
   cursor.style.top = `${y}px`;
-  await sleep(650);
+  await sleep(500);
 }
 async function cursorClickFx() {
   if (!cursor) return;
@@ -337,7 +337,7 @@ async function typeAndSay(text) {
   input.focus();
   for (const ch of text) {
     input.value += ch;
-    await sleep(38 + Math.random() * 55);
+    await sleep(30 + Math.random() * 35);
   }
   await sleep(250);
   input.value = "";

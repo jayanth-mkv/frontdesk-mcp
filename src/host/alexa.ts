@@ -125,13 +125,13 @@ Current time (IST): ${clockNow().toLocaleTimeString("en-IN", { timeZone: "Asia/K
       const hours = Number(m.match(/(\d+)\s*hour/)?.[1] ?? (/two|2/.test(m) ? 2 : 0));
       const mins = Number(m.match(/(\d+)\s*min/)?.[1] ?? 0) + hours * 60;
       const r = await this.callTool("set_focus_mode", { on: true, ...(mins ? { minutes: mins } : {}) });
-      return `Got it. ${AlexaHost.textOf(r)} I'll only interrupt you if something really needs you.`;
+      return `Got it. ${AlexaHost.textOf(r).replace(/\s*\(.*?\)/, "")}`;
     }
     if (/miss|catch me up|digest|what happened/.test(m)) {
       const r = await this.callTool("get_focus_digest", {});
       const d = r.structuredContent as { headline: string; items: { text: string; needsApproval?: string }[]; pendingApprovals: { summary: string }[] };
-      const highlights = d.items.filter((i) => !i.needsApproval).slice(0, 3).map((i) => i.text).join(" ");
-      return `${d.headline} ${highlights} ${d.pendingApprovals.length ? `One thing needs your OK: ${d.pendingApprovals[0].summary} Should I approve it?` : ""}`.trim();
+      // The Echo Show card lists every item, so speech stays short: headline plus the one decision.
+      return `${d.headline} ${d.pendingApprovals.length ? `${d.pendingApprovals[0].summary} Should I approve it?` : ""}`.trim();
     }
     if (/^(yes|yeah|approve|go ahead|do it|ok)/.test(m) || /approve/.test(m)) return AlexaHost.textOf(await this.callTool("resolve_approval", { approve: true }));
     if (/^(no|decline|deny)/.test(m)) return AlexaHost.textOf(await this.callTool("resolve_approval", { approve: false }));

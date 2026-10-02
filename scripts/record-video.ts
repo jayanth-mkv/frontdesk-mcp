@@ -20,14 +20,13 @@ const H = 1080;
 
 const NARRATION = {
   title:
-    "Nine interruptions in an hour. A rider lost at the gate, a restaurant missing a dish, a salon running late, and one caller who isn't who they say they are. Alexa can place the order. Nobody handles what comes after. Until now.",
-  intro: "This is FrontDesk, an Alexa+ add-on built as a self-hosted MCP server. Arjun is about to start deep work.",
-  focus: "From now on, every call to the home goes to FrontDesk instead of Arjun's phone.",
-  rider: "The rider's number matches an active order, so FrontDesk replies in Hindi with the gate and drop-off instructions.",
-  scam: "This number isn't tied to any order. The model may propose sharing the OTP, but a deterministic policy engine denies it and flags the call. The LLM can never override it.",
-  salon: "Moving the salon to six thirty breaks Arjun's rules, so FrontDesk holds it for him.",
-  digest: "Instead of nine interruptions, one summary, rendered on the Echo Show as an MCP App. One tap approves the salon change.",
-  arch: "Under the hood: a TypeScript MCP server on the latest spec over Streamable HTTP, deployed to Amazon Bedrock AgentCore Runtime. Claude on Bedrock proposes, the policy engine decides, Amazon Polly speaks, DynamoDB remembers, and every word lands in a consent ledger.",
+    "Alexa can place the order. Then the calls start: a rider lost at the gate, a kitchen out of stock, a stranger after your OTP. FrontDesk handles what comes after.",
+  intro: "Arjun starts deep work. FrontDesk, an MCP server for Alexa+, takes every call to the home.",
+  rider: "A verified rider gets directions, in Hindi.",
+  scam: "An unknown number wants the OTP. A deterministic policy engine denies it, and the model can't override it.",
+  salon: "Moving the salon breaks Arjun's rules, so it waits for him.",
+  digest: "One summary instead of nine interruptions, as an MCP App on the Echo Show. One tap approves.",
+  arch: "Under the hood: an MCP server on Bedrock AgentCore. Claude proposes, a policy engine decides, Polly speaks, and every action lands in a consent ledger.",
   close: "FrontDesk. Focus on your work. Your home's front desk has the rest.",
 };
 
@@ -42,7 +41,7 @@ async function fetchTts(role: string, text: string, file: string) {
 }
 
 /** A still card + narration → an MP4 segment. */
-async function card(page: Page, name: string, text: string, padSec = 1.2) {
+async function card(page: Page, name: string, text: string, padSec = 0.9) {
   await page.goto(`file://${resolve("video/cards", `${name}.html`)}`);
   await page.waitForLoadState("networkidle");
   const png = join(TMP, `${name}.png`);
@@ -63,29 +62,28 @@ async function card(page: Page, name: string, text: string, padSec = 1.2) {
 async function demo(page: Page) {
   const d = (fn: string, ...args: unknown[]) => page.evaluate(([f, a]) => (window as any).demo[f as string](...(a as unknown[])), [fn, args] as const);
   await d("narrate", NARRATION.intro);
-  await sleep(300);
   await d("typeAndSay", "Alexa, I'm going heads-down for two hours.");
-  await d("narrate", NARRATION.focus);
-  await sleep(700);
+  await sleep(400);
 
   await d("call", "rider");
   await d("narrate", NARRATION.rider);
-  await sleep(500);
+  await sleep(300);
   await d("call", "kitchen");
-  await sleep(500);
+  await sleep(300);
   await d("call", "scam");
   await d("narrate", NARRATION.scam);
-  await sleep(500);
+  await sleep(300);
   await d("call", "salon");
   await d("narrate", NARRATION.salon);
-  await sleep(900);
+  await sleep(500);
 
   await d("typeAndSay", "Alexa, what did I miss?");
-  await sleep(600);
+  await sleep(400);
   // Click "Approve" on the MCP App card, like a person tapping the Echo Show.
   const frameEl = await page.$("#app-frame");
   const box = await frameEl!.boundingBox();
   const yes = page.frameLocator("#app-frame").locator("button.yes").first();
+  await yes.scrollIntoViewIfNeeded().catch(() => {});
   const yb = await yes.boundingBox().catch(() => null);
   await d("narrate", NARRATION.digest);
   if (yb && box) {
@@ -93,7 +91,7 @@ async function demo(page: Page) {
     await d("cursorClickFx");
     await yes.click();
   }
-  await sleep(2500);
+  await sleep(2000);
 }
 
 async function main() {
@@ -106,7 +104,7 @@ async function main() {
   const cardPage = await cardCtx.newPage();
   const title = await card(cardPage, "title", NARRATION.title);
   const arch = await card(cardPage, "arch", NARRATION.arch);
-  const close = await card(cardPage, "close", NARRATION.close, 1.8);
+  const close = await card(cardPage, "close", NARRATION.close, 1.5);
   await cardCtx.close();
 
   // Reset state, then record the live demo.
